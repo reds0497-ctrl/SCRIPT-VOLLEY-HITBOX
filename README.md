@@ -1,32 +1,35 @@
-local cfg = require(game.ReplicatedStorage.HitboxConfig) -- mesmo ModuleScript de antes
+-- LocalScript – coloque em StarterPlayerScripts (ou onde preferir)
 
-local openBtn = script.Parent.OpenButton
-local panel   = script.Parent.Panel
-local slider  = panel.Slider
-local toggle  = panel.Toggle
-local close   = panel.CloseButton
+local Players = game:GetService("Players")
+local UserInputService = game:GetService("UserInputService")
 
-local dragging = false
+local player = Players.LocalPlayer
+local ball = workspace:WaitForChild("Ball")          -- nome da bola no seu mapa
+local hitboxSize = Vector3.new(6, 6, 6)              -- tamanho que você quer
 
--- abre / fecha o painel
-openBtn.MouseButton1Click:Connect(function() panel.Visible = true end)
-close.MouseButton1Click:Connect(function() panel.Visible = false end)
+local function criarHitbox()
+    if not ball then return end
 
--- slider de tamanho (funciona com toque)
-slider.InputBegan:Connect(function(inp)
-    if inp.UserInputType == Enum.UserInputType.Touch then dragging = true end
-end)
-slider.InputEnded:Connect(function() dragging = false end)
+    -- procura ou cria a parte que será a hitbox
+    local hitbox = ball:FindFirstChild("Hitbox")
+    if not hitbox then
+        hitbox = Instance.new("Part", ball)
+        hitbox.Name = "Hitbox"
+        hitbox.Transparency = 0.5
+        hitbox.CanCollide = true
+        hitbox.Anchored = false
+        hitbox.Massless = true
+    end
 
-game.UserInputService.InputChanged:Connect(function(inp)
-    if dragging and inp.UserInputType == Enum.UserInputType.Touch then
-        local size = math.clamp((inp.Position.X - slider.AbsolutePosition.X) / slider.AbsoluteSize.X, 0.1, 2)
-        cfg.Size = Vector3.new(size*4, size*4, size*4)
+    hitbox.Size = hitboxSize
+end
+
+-- Exemplo: ativa ao pressionar a tecla "E"
+UserInputService.InputBegan:Connect(function(input)
+    if input.KeyCode == Enum.KeyCode.E then
+        criarHitbox()
     end
 end)
 
--- toggle da hitbox
-toggle.MouseButton1Click:Connect(function()
-    cfg.Enabled = not cfg.Enabled
-    toggle.Text = cfg.Enabled and "Desativar" or "Ativar"
-end)
+-- Se quiser que a hitbox já venha aumentada ao entrar no jogo:
+-- criarHitbox()
