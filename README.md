@@ -2,7 +2,7 @@
 local UserInputService = game:GetService("UserInputService")
 local ball = workspace:WaitForChild("Ball") 
 
-local function aumentarHitbox(25)
+local function aumentarHitbox(30)
     local hitbox = ball:FindFirstChild("Hitbox")
     if not hitbox then
         hitbox = Instance.new("Part", ball)
@@ -18,7 +18,7 @@ end
 
 UserInputService.InputBegan:Connect(function(input)
     if input.KeyCode == Enum.KeyCode.K then
-        aumentarHitbox(25)
+        aumentarHitbox(30)
     end
 end)
 
